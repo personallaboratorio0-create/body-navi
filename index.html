@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BODY Navi 🧭</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#FFF9F0;font-family:'Hiragino Sans','Yu Gothic',sans-serif;color:#2D2D2D;min-height:100vh;}
+input,button{font-family:inherit;}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+::-webkit-scrollbar{display:none;}
+.header{background:linear-gradient(135deg,#FF6B6B,#FF9A3C,#FFD93D);padding:16px 18px 12px;position:relative;overflow:hidden;}
+.hc1{position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,0.15);border-radius:50%;}
+.hc2{position:absolute;bottom:-30px;left:60px;width:80px;height:80px;background:rgba(255,255,255,0.1);border-radius:50%;}
+.hrel{position:relative;}
+.tabs{display:flex;overflow-x:auto;gap:4px;padding:10px 12px 0;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.tb{flex-shrink:0;padding:6px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:700;background:transparent;color:#888;white-space:nowrap;}
+.tb.on{background:linear-gradient(135deg,#FF6B6B,#FF9A3C);color:#fff;}
+.content{padding:12px 14px 90px;}
+.card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:12px;}
+.cl{border-left:4px solid #FF6B6B;} .cy{border-left:4px solid #FFD93D;} .cg{border-left:4px solid #6BCB77;}
+.cb{border-left:4px solid #4D96FF;} .cp{border-left:4px solid #C77DFF;} .co{border-left:4px solid #FF9A3C;}
+.lbl{font-size:11px;font-weight:700;color:#888;margin-bottom:10px;}
+.inp{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #F0E8DC;background:#FAFAFA;color:#2D2D2D;font-size:14px;outline:none;}
+.inp:focus{border-color:#FF9A3C;}
+.btn{padding:11px 16px;border-radius:12px;border:none;cursor:pointer;font-size:14px;font-weight:700;color:#fff;}
+.btn:disabled{background:#ddd!important;cursor:not-allowed;}
+.fw{width:100%;}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.sc{background:#fff;border-radius:16px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.pfcr{display:flex;gap:6px;margin-bottom:8px;}
+.pfci{flex:1;border-radius:12px;padding:8px 6px;text-align:center;}
+.timr{display:flex;gap:5px;margin-bottom:12px;}
+.timb{flex:1;padding:6px 2px;border-radius:10px;border:2px solid #F0E8DC;background:transparent;color:#888;font-size:12px;font-weight:700;cursor:pointer;}
+.timb.on{border-color:#FF6B6B;background:rgba(255,107,107,0.1);color:#FF6B6B;}
+.chat-wrap{background:#fff;border-radius:16px;padding:12px;min-height:280px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.cm{max-width:82%;padding:9px 13px;font-size:14px;line-height:1.65;white-space:pre-wrap;}
+.cm.u{align-self:flex-end;background:linear-gradient(135deg,#FF6B6B,#FF9A3C);color:#fff;border-radius:18px 18px 4px 18px;}
+.cm.a{align-self:flex-start;background:#f5f5f5;color:#2D2D2D;border-radius:18px 18px 18px 4px;}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;}
+.pwrap{position:relative;}
+.pwrap img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;}
+.pdel{position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.55);border:none;color:#fff;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;}
+.padd{aspect-ratio:1;border-radius:10px;border:2px dashed rgba(255,107,107,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:22px;background:rgba(255,107,107,0.04);}
+.rbox{background:rgba(107,203,119,0.1);border-radius:12px;padding:12px;margin-bottom:8px;border:1.5px solid rgba(107,203,119,0.3);}
+.ebox{background:rgba(255,107,107,0.1);border-radius:10px;padding:12px;border:1.5px solid rgba(255,107,107,0.3);}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mc{background:rgba(255,255,255,0.7);border-radius:12px;padding:10px;}
+.ar{display:flex;gap:4px;flex-wrap:wrap;}
+.ab{padding:4px 10px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:700;background:rgba(0,0,0,0.06);color:#888;}
+.ab.on{background:#6BCB77;color:#fff;}
+.sr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F0E8DC;}
+.mr{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #F0E8DC;}
+.tag{font-size:9px;font-weight:800;padding:2px 5px;border-radius:5px;background:rgba(255,154,60,0.15);color:#FF9A3C;}
+.qr{display:flex;gap:6px;}
+.qb{flex:1;padding:10px 2px;border-radius:10px;border:2px solid #F0E8DC;background:transparent;font-size:20px;cursor:pointer;}
+.qb.on{border-color:#4D96FF;background:rgba(77,150,255,0.1);}
+.hi{background:#fff;border-radius:16px;padding:14px;border:2px solid #F0E8DC;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:8px;}
+.hi.today{border-color:#FF6B6B;}
+.pab{width:100%;padding:7px;border-radius:8px;border:1.5px dashed rgba(107,203,119,0.4);background:rgba(107,203,119,0.04);color:#6BCB77;font-size:12px;cursor:pointer;font-weight:700;}
+.wbox{margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(255,107,107,0.1);font-size:11px;color:#FF6B6B;}
+.apin{font-size:11px;color:#FF6B6B;text-align:center;margin-top:8px;}
+.dsel{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 10px;background:#FFF9F0;border-radius:10px;border:1.5px solid #F0E8DC;}
+/* 履歴から選択 */
+.hlist{max-height:200px;overflow-y:auto;border:1.5px solid #F0E8DC;border-radius:10px;background:#fff;}
+.hitem{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #F0E8DC;cursor:pointer;}
+.hitem:hover{background:#FFF9F0;}
+.hitem:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hc1"></div><div class="hc2"></div>
+  <div class="hrel">
+    <div style="font-size:11px;font-weight:800;letter-spacing:3px;color:rgba(255,255,255,0.8)">BODY</div>
+    <div style="font-size:26px;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">Navi 🧭</div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <span id="hDate" style="font-size:12px;color:rgba(255,255,255,0.9)"></span>
+      <span id="hBmi" style="font-size:12px;color:rgba(255,255,255,0.9);display:none"></span>
+      <span id="hApi" style="font-size:11px;color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:10px;cursor:pointer" onclick="go(8)">⚙️ APIキー未設定</span>
+    </div>
+  </div>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="content" id="content"></div>
+
+<script>
+const S={
+  tab:0,
+  apiKey:"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",
+  days:{},chat:[],advice:"",
+  timing:"朝",imgData:[],imgBusy:false,calcResult:null,busy:false,advBusy:false,
+  profile:{height:"",weight:"",age:"",goal:"",weeks:"",activity:"1.375"},
+  ex:{type:"",min:"",cal:""},sl:{h:"",q:"3"},todayW:"",
+  mealName:"",mealNote:"",chatInput:"",showKey:false,
+  pastAdd:{},selectedDate:null,showHistoryPicker:false,
+};
+
+const LS={
+  load(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},
+  save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+};
+
+const dk=(()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;})();
+const bmi=(h,w)=>h&&w?+(w/(h/100)**2).toFixed(1):null;
+const bmiL=b=>+b<18.5?"低体重":+b<25?"標準":+b<30?"過体重":"肥満";
+const esc=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const TIMINGS=["朝","昼","晩","おやつ","夜食"];
+const QE=["😫","😴","😐","😊","🌟"];
+const TABS=["🏠今日","🍽️食事","🏃運動","😴睡眠","📊グラフ","💡アドバイス","💬相談","📅履歴","⚙️設定"];
+
+function getDay(k){return S.days[k]||{weight:"",meals:[],exercises:[],sleep:null};}
+function mutDay(k,fn){
+  if(!S.days[k])S.days[k]={weight:"",meals:[],exercises:[],sleep:null};
+  S.days[k]=fn(S.days[k]);
+  LS.save("bn_days",S.days);
+}
+function readFile(f){return new Promise((r,j)=>{const fr=new FileReader();fr.onload=e=>r(e.target.result);fr.onerror=()=>j();fr.readAsDataURL(f);});}
+
+async function api(messages,system){
+  if(!S.apiKey)throw new Error("APIキーが設定されていません");
+  const body={model:"claude-opus-4-5",max_tokens:1024,messages};
+  if(system)body.system=system;
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":S.apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify(body)
+  });
+  const j=await res.json();
+  if(!res.ok)throw new Error(j?.error?.message||"API error "+res.status);
+  return j.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+}
+
+// 過去の全食事履歴を重複なしで取得
+function getMealHistory(){
+  const seen=new Set();
+  const list=[];
+  Object.entries(S.days).sort((a,b)=>b[0]>a[0]?1:-1).forEach(([,d])=>{
+    (d.meals||[]).forEach(m=>{
+      const key=m.name.trim();
+      if(!seen.has(key)){
+        seen.add(key);
+        list.push(m);
+      }
+    });
+  });
+  return list;
+}
+
+function init(){
+  const p=LS.load("bn_profile");if(p)S.profile=p;
+  const k=LS.load("bn_apikey");if(k)S.apiKey=k;
+  const d=LS.load("bn_days");if(d){S.days=d;if(d[dk]?.weight)S.todayW=d[dk].weight;}
+  const c=LS.load("bn_chat");if(c)S.chat=c;
+  render();
+}
+
+function render(){renderHeader();renderTabs();renderContent();}
+
+function renderHeader(){
+  document.getElementById("hDate").textContent=dk;
+  const b=bmi(S.profile.height,S.profile.weight);
+  const hb=document.getElementById("hBmi");
+  if(b){hb.textContent="BMI "+b;hb.style.display="inline";}else hb.style.display="none";
+  document.getElementById("hApi").style.display=S.apiKey?"none":"inline";
+}
+
+function renderTabs(){
+  document.getElementById("tabs").innerHTML=
+    TABS.map((t,i)=>`<button class="tb${S.tab===i?" on":""}" onclick="go(${i})">${t}</button>`).join("");
+}
+
+function go(i){
+  if(i!==1){S.mealName="";S.mealNote="";S.imgData=[];S.calcResult=null;S.showHistoryPicker=false;}
+  S.tab=i;render();
+}
+
+function renderContent(){
+  const el=document.getElementById("content");
+  el.innerHTML=getTabHTML();
+  if(S.tab===6){const ca=document.getElementById("chatArea");if(ca)ca.scrollTop=ca.scrollHeight;}
+}
+
+function getTabHTML(){
+  const td=getDay(dk);
+  const ki=td.meals.reduce((s,m)=>s+(+m.calories||0),0);
+  const ko=td.exercises.reduce((s,e)=>s+(+e.calories||0),0);
+  const pi=td.meals.reduce((s,m)=>s+(+m.protein||0),0);
+  const fi=td.meals.reduce((s,m)=>s+(+m.fat||0),0);
+  const ci=td.meals.reduce((s,m)=>s+(+m.carb||0),0);
+  const b=bmi(S.profile.height,S.profile.weight);
+  const bmr=S.profile.height&&S.profile.weight&&S.profile.age?Math.round(655+9.6*+S.profile.weight+1.8*+S.profile.height-4.7*+S.profile.age):null;
+  const tdee=bmr?Math.round(bmr*(+S.profile.activity||1.375)):null;
+  const wl=S.profile.goal&&S.profile.weeks&&S.profile.weight?Math.max((+S.profile.weight-+S.profile.goal)/+S.profile.weeks,0):0.5;
+  const tc=tdee?Math.max(tdee-Math.round(wl*7700/7),1200):null;
+  const rem=tc?tc-ki:null;
+  if(S.tab===0)return tabToday(td,ki,ko,pi,fi,ci,b,bmr,tdee,wl,tc,rem);
+  if(S.tab===1)return tabMeal(td,ki);
+  if(S.tab===2)return tabEx(td,ko);
+  if(S.tab===3)return tabSleep(td);
+  if(S.tab===4)return tabGraph();
+  if(S.tab===5)return tabAdvice(ki,ko,td);
+  if(S.tab===6)return tabChat();
+  if(S.tab===7)return tabHistory();
+  if(S.tab===8)return tabSettings();
+  return "";
+}
+
+// ── 今日 ──
+function tabToday(td,ki,ko,pi,fi,ci,b,bmr,tdee,wl,tc,rem){
+  const sl=td.sleep?.hours||"--";
+  return `
+<div class="sg">
+  ${[["🍽️","摂取",ki,"kcal","#FF6B6B"],["🔥","消費",ko,"kcal","#FF5722"],["😴","睡眠",sl,"時間","#4D96FF"]].map(([ic,lb,vl,un,cl])=>`
+  <div class="sc"><div style="font-size:20px">${ic}</div><div style="font-size:10px;color:#888;margin-top:2px">${lb}</div><div style="font-size:18px;font-weight:900;color:${cl};margin-top:2px">${vl}</div><div style="font-size:10px;color:#888">${un}</div></div>`).join("")}
+</div>
+${pfcCard(pi,fi,ci,tc)}
+<div class="card cy"><div class="lbl">今日の体重</div>
+  <div style="display:flex;gap:8px">
+    <input class="inp" type="number" id="iW" value="${esc(S.todayW)}" placeholder="${S.profile.weight||"kg"}" style="flex:1">
+    <button class="btn" style="background:#FFD93D;color:#2D2D2D" onclick="saveWeight()">保存</button>
+  </div>
+  ${b?`<div style="margin-top:6px;font-size:12px;color:#888">BMI ${b}（${bmiL(b)}）　目標まで ${S.profile.goal?(+S.profile.weight-+S.profile.goal).toFixed(1):"?"}kg</div>`:""}
+</div>
+${tc?`<div class="card cg"><div class="lbl">栄養ガイド</div>
+  <div class="tc" style="margin-bottom:10px">
+    ${[["基礎代謝",bmr+"kcal","寝てるだけ"],["1日の消費",tdee+"kcal","活動量込み"],["目標摂取",tc+"kcal","週"+wl.toFixed(2)+"kg減"],["今日の残り",Math.abs(rem)+"kcal",rem>=0?"あと食べられる":"⚠️超過"]].map(([lb,vl,sub])=>`
+    <div class="mc"><div style="font-size:10px;color:#888">${lb}</div><div style="font-size:15px;font-weight:900;color:${lb==="今日の残り"?(rem>=0?"#6BCB77":"#FF6B6B"):lb==="目標摂取"?"#FF9A3C":"#2D2D2D"}">${vl}</div><div style="font-size:10px;color:#888">${sub}</div></div>`).join("")}
+  </div>
+  <div style="font-size:10px;color:#888;margin-bottom:6px">活動量</div>
+  <div class="ar">${[["0.9","ほぼ動かない"],["1.2","座り仕事"],["1.375","軽い運動"],["1.55","週3〜5"],["1.725","毎日運動"]].map(([val,lb])=>`<button class="ab${String(S.profile.activity||"1.375")===val?" on":""}" onclick="setAct('${val}')">${lb}</button>`).join("")}</div>
+  ${wl>1?`<div class="wbox">⚠️ 週${wl.toFixed(2)}kg減は急激です。筋肉量低下・リバウンドのリスクがあります。</div>`:""}
+</div>`:""}
+<div class="card cp"><div class="lbl">プロフィール</div>
+  <div class="tc">
+    ${[["身長(cm)","height"],["体重(kg)","weight"],["年齢","age"],["目標体重(kg)","goal"],["目標期間(週)","weeks"]].map(([lb,k])=>`
+    <div><div style="font-size:10px;color:#888;margin-bottom:3px">${lb}</div><input class="inp" type="number" data-pk="${k}" value="${esc(S.profile[k])}" placeholder="--"></div>`).join("")}
+  </div>
+</div>
+${td.meals.length?`<div class="card co"><div class="lbl">今日の食事　${ki} kcal</div>${td.meals.map((m,i)=>mealHTML(m,i,dk)).join("")}</div>`:""}`;
+}
+
+function pfcCard(pi,fi,ci,tc){
+  if(!tc) return "";
+  const tP=S.profile.weight?Math.round(+S.profile.weight*1.6):60;
+  const tF=Math.round(tc*0.25/9);
+  const tC=Math.round((tc-tP*4-tF*9)/4);
+  if(pi===0&&fi===0&&ci===0){
+    return `<div class="card cg"><div class="lbl">今日の目標PFC</div><div class="pfcr">
+    ${[["🥩 P",tP,"g","#6BCB77"],["🧈 F",tF,"g","#FF9A3C"],["🍚 C",tC,"g","#4D96FF"]].map(([lb,vl,unit,cl])=>`<div class="pfci" style="background:${cl}18"><div style="font-size:10px;color:${cl};font-weight:700">${lb}</div><div style="font-size:16px;font-weight:900;color:${cl}">${vl}${unit}</div></div>`).join("")}
+    </div></div>`;
+  }
+  const lP=Math.max(tP-pi,0),lF=Math.max(tF-fi,0),lC=Math.max(tC-ci,0);
+  return `<div class="card cg"><div class="lbl">PFC　今日 vs 目標</div><div class="pfcr">
+  ${[["🥩 P",pi,tP,"#6BCB77"],["🧈 F",fi,tF,"#FF9A3C"],["🍚 C",ci,tC,"#4D96FF"]].map(([lb,cur,tgt,cl])=>{
+    const pct=Math.min(Math.round(cur/tgt*100),100);
+    return `<div class="pfci" style="background:${cl}18">
+      <div style="font-size:10px;color:${cl};font-weight:700">${lb}</div>
+      <div style="font-size:13px;font-weight:900;color:${cl}">${cur}<span style="font-size:9px">/${tgt}g</span></div>
+      <div style="background:#eee;border-radius:4px;height:5px;margin:3px 0"><div style="background:${cl};width:${pct}%;height:5px;border-radius:4px"></div></div>
+      <div style="font-size:10px;color:${cl}">あと${Math.max(tgt-cur,0)}g</div>
+    </div>`;
+  }).join("")}
+  </div>
+  ${lP>0||lF>0||lC>0?`<div style="margin-top:6px">
+    ${lP>0?`<div style="font-size:11px;color:#555;padding:3px 0">🥩 あと${lP}g → 鶏むね肉${Math.round(lP/0.23)}g・卵${Math.round(lP/6.2)}個</div>`:""}
+    ${lF>0?`<div style="font-size:11px;color:#555;padding:3px 0">🧈 あと${lF}g → アボカド${Math.round(lF/0.173)}g・くるみ${Math.round(lF/0.65)}g</div>`:""}
+    ${lC>0?`<div style="font-size:11px;color:#555;padding:3px 0">🍚 あと${lC}g → ご飯${Math.round(lC/0.37)}g・バナナ${Math.round(lC/22.5)}本</div>`:""}
+  </div>`:`<div style="text-align:center;font-size:12px;color:#6BCB77;font-weight:700;padding:4px">🎉 PFC目標達成！</div>`}
+  </div>`;
+}
+
+// ── 食事 ──
+function tabMeal(td,ki){
+  const selDk=S.selectedDate||dk;
+  const selTd=getDay(selDk);
+  const selKi=selTd.meals.reduce((s,m)=>s+(+m.calories||0),0);
+  const history=getMealHistory();
+  return `<div class="card cl"><div style="font-size:13px;font-weight:800;margin-bottom:12px">🍽️ 食事を追加</div>
+${dateSelector()}
+<div class="timr">${TIMINGS.map(t=>`<button class="timb${S.timing===t?" on":""}" onclick="setTiming('${t}')">${t}</button>`).join("")}</div>
+${S.imgData.length?`<div class="pgrid">
+  ${S.imgData.map((src,i)=>`<div class="pwrap"><img src="${src}"><button class="pdel" onclick="rmPhoto(${i})">✕</button></div>`).join("")}
+  <label class="padd">＋<input type="file" accept="image/*" multiple style="display:none" onchange="onPhoto(this)"></label>
+</div>${S.imgBusy?`<div style="font-size:12px;color:#888;text-align:center;margin-bottom:8px">📷 AI解析中...</div>`:""}`:
+`<label style="display:block;margin-bottom:10px;padding:14px 0;border-radius:12px;border:2px dashed rgba(255,107,107,0.3);background:rgba(255,107,107,0.04);text-align:center;cursor:pointer;color:#888;font-size:13px">📷 写真を追加（複数可）<input type="file" accept="image/*" multiple style="display:none" onchange="onPhoto(this)"></label>`}
+<div style="margin-bottom:8px">
+  <div style="font-size:10px;color:#888;margin-bottom:4px">食事名 <span style="color:#FF6B6B">*必須</span></div>
+  <input class="inp" id="iMN" value="${esc(S.mealName)}" placeholder="例：セイロそば、ラーメン">
+</div>
+<div style="margin-bottom:10px">
+  <div style="font-size:10px;color:#888;margin-bottom:4px">量・備考（任意）</div>
+  <input class="inp" id="iMo" value="${esc(S.mealNote)}" placeholder="例：並盛り、大盛り">
+</div>
+${!S.calcResult?`<button class="btn fw" style="background:${!S.busy?"#FF6B6B":"#ddd"}" ${S.busy?"disabled":""} onclick="calcCal()">${S.busy?"⏳ 計算中...":"🔢 カロリー・栄養素を計算"}</button>`:""}
+${S.calcResult&&!S.calcResult.error?`<div class="rbox">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;color:#888">推定カロリー</span><span style="font-size:22px;font-weight:900;color:#FF9A3C">${S.calcResult.calories} kcal</span></div>
+  <div class="pfcr">${[["🥩 P",(S.calcResult.protein||0)+"g","#6BCB77"],["🧈 F",(S.calcResult.fat||0)+"g","#FF9A3C"],["🍚 C",(S.calcResult.carb||0)+"g","#4D96FF"]].map(([lb,vl,cl])=>`<div class="pfci" style="background:${cl}18"><div style="font-size:10px;color:${cl};font-weight:700">${lb}</div><div style="font-size:14px;font-weight:800;color:${cl}">${vl}</div></div>`).join("")}</div>
+  <div style="display:flex;gap:8px">
+    <button onclick="S.calcResult=null;render()" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid #F0E8DC;background:#fff;color:#888;font-size:13px;cursor:pointer">再計算</button>
+    <button onclick="confirmMeal()" style="flex:2;padding:9px;border-radius:10px;border:none;background:#6BCB77;color:#fff;font-size:13px;font-weight:700;cursor:pointer">✅ 登録する</button>
+  </div>
+</div>`:""}
+${S.calcResult?.error?`<div class="ebox"><div style="font-size:12px;color:#FF6B6B;margin-bottom:8px">⚠️ ${esc(S.calcResult.error)}</div><button onclick="S.calcResult=null;render()" style="font-size:12px;padding:6px 12px;border-radius:8px;border:none;background:#FF6B6B;color:#fff;cursor:pointer">再試行</button></div>`:""}
+</div>
+${history.length>0?`<div class="card co">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="lbl" style="margin:0">📚 履歴から追加</div>
+    <button onclick="S.showHistoryPicker=!S.showHistoryPicker;render()" style="font-size:11px;padding:4px 10px;border-radius:10px;border:1.5px solid #F0E8DC;background:#fff;color:#FF9A3C;cursor:pointer">${S.showHistoryPicker?"閉じる":"選択する"}</button>
+  </div>
+  ${S.showHistoryPicker?`<div class="hlist">
+    ${history.map((m,i)=>`<div class="hitem" onclick="addFromHistory(${i})">
+      <div>
+        <div style="font-size:13px;font-weight:600">${esc(m.name)}</div>
+        <div style="font-size:11px;color:#888">P:${m.protein||0}g F:${m.fat||0}g C:${m.carb||0}g</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:800;color:#FF9A3C">${m.calories}kcal</div>
+        <div style="font-size:10px;color:#aaa">タップで追加</div>
+      </div>
+    </div>`).join("")}
+  </div>`:""}
+</div>`:""}
+${selTd.meals.length?`<div class="card co"><div class="lbl">${selDk===dk?"今日":selDk}の食事　${selKi} kcal</div>${selTd.meals.map((m,i)=>mealHTML(m,i,selDk)).join("")}</div>`:""}`;
+}
+
+// ── 運動 ──
+function tabEx(td,ko){
+  const selDk=S.selectedDate||dk;
+  const selTd=getDay(selDk);
+  const selKo=selTd.exercises.reduce((s,e)=>s+(+e.calories||0),0);
+  return `<div class="card cl"><div style="font-size:13px;font-weight:800;margin-bottom:12px">🏃 運動を記録</div>
+  ${dateSelector()}
+  <input class="inp" id="iET" value="${esc(S.ex.type)}" placeholder="種目（例：ウォーキング、筋トレ）" style="margin-bottom:8px">
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <input class="inp" type="number" id="iEM" value="${S.ex.min}" placeholder="時間（分）">
+    <input class="inp" type="number" id="iEC" value="${S.ex.cal}" placeholder="消費kcal">
+  </div>
+  <button class="btn fw" style="background:#FF6B6B" onclick="addEx()">＋ 追加</button></div>
+  ${selTd.exercises.length?`<div class="card co"><div class="lbl">${selDk===dk?"今日":selDk}の運動　${selKo} kcal消費</div>
+  ${selTd.exercises.map((e,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0E8DC">
+    <div><div style="font-size:14px;font-weight:700">🏃 ${esc(e.type)}</div><div style="font-size:11px;color:#888">${e.minutes||""}分 · ${e.time}</div></div>
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:14px;font-weight:800;color:#FF6B6B">${e.calories||"?"} kcal</span>
+    <button onclick="delEx(${i})" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:18px">×</button></div>
+  </div>`).join("")}</div>`:""}`;
+}
+
+// ── 睡眠 ──
+function tabSleep(td){
+  const selDk=S.selectedDate||dk;
+  const selTd=getDay(selDk);
+  return `<div class="card cb"><div style="font-size:13px;font-weight:800;margin-bottom:12px">😴 睡眠を記録</div>
+  ${dateSelector()}
+  <div style="margin-bottom:12px"><div style="font-size:11px;color:#888;margin-bottom:5px">睡眠時間（時間）</div>
+  <input class="inp" type="number" id="iSH" value="${S.sl.h}" placeholder="7"></div>
+  <div style="margin-bottom:12px"><div style="font-size:11px;color:#888;margin-bottom:6px">睡眠の質</div>
+  <div class="qr">${QE.map((e,i)=>`<button class="qb${S.sl.q===String(i+1)?" on":""}" onclick="setSQ('${i+1}')">${e}</button>`).join("")}</div></div>
+  <button class="btn fw" style="background:#4D96FF" onclick="saveSleep()">保存</button></div>
+  ${selTd.sleep?`<div class="card cb"><div style="display:flex;justify-content:space-between;align-items:center">
+  <span style="font-size:32px;font-weight:900;color:#4D96FF">${selTd.sleep.hours}<span style="font-size:14px;font-weight:400;color:#888">時間</span></span>
+  <span style="font-size:40px">${QE[+selTd.sleep.quality-1]}</span></div></div>`:""}`;
+}
+
+// ── グラフ ──
+function tabGraph(){
+  const entries=Object.entries(S.days).sort((a,b)=>a[0]>b[0]?1:-1).slice(-7);
+  if(entries.length<2)return `<div style="text-align:center;color:#888;font-size:14px;margin-top:40px">2日以上記録するとグラフが表示されます</div>`;
+  const wd=entries.map(([k,d])=>({date:k.slice(5),w:d.weight?+d.weight:null,in:d.meals?.reduce((s,m)=>s+(+m.calories||0),0)||0,out:d.exercises?.reduce((s,e)=>s+(+e.calories||0),0)||0,sl:d.sleep?.hours?+d.sleep.hours:null}));
+  function lineSvg(data,key,color){
+    const pts=data.map((d,i)=>d[key]!==null?{i,v:d[key]}:null).filter(Boolean);
+    if(!pts.length)return `<div style="text-align:center;color:#888;font-size:12px;padding:20px">データなし</div>`;
+    const W=320,H=90,px=24;
+    const xs=data.map((_,i)=>px+i*(W-px*2)/(data.length-1));
+    const vs=pts.map(p=>p.v);
+    const mn=Math.min(...vs),mx=Math.max(...vs),rng=mx-mn||1;
+    const py=v=>H-px-((v-mn)/rng)*(H-px*2);
+    const path=pts.map((p,j)=>`${j===0?"M":"L"}${xs[p.i].toFixed(1)},${py(p.v).toFixed(1)}`).join(" ");
+    const dots=pts.map(p=>`<circle cx="${xs[p.i].toFixed(1)}" cy="${py(p.v).toFixed(1)}" r="4" fill="${color}"/><text x="${xs[p.i].toFixed(1)}" y="${(py(p.v)-8).toFixed(1)}" text-anchor="middle" font-size="9" fill="${color}">${p.v}</text>`).join("");
+    const xlb=data.map((d,i)=>`<text x="${xs[i].toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="9" fill="#aaa">${d.date}</text>`).join("");
+    return `<svg width="100%" viewBox="0 0 ${W} ${H}" style="overflow:visible"><path d="${path}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>${dots}${xlb}</svg>`;
+  }
+  function barSvg(data){
+    const W=320,H=90,px=24;
+    const mv=Math.max(...data.map(d=>Math.max(d.in,d.out)),1);
+    const bw=(W-px*2)/(data.length*2.8);
+    return `<svg width="100%" viewBox="0 0 ${W} ${H}">${data.map((d,i)=>{
+      const x=px+i*(W-px*2)/data.length;
+      const ih=(d.in/mv)*(H-px*2);const oh=(d.out/mv)*(H-px*2);
+      return `<rect x="${x.toFixed(1)}" y="${(H-px-ih).toFixed(1)}" width="${bw.toFixed(1)}" height="${ih.toFixed(1)}" fill="#FF9A3C" rx="2"/>
+<rect x="${(x+bw+2).toFixed(1)}" y="${(H-px-oh).toFixed(1)}" width="${bw.toFixed(1)}" height="${oh.toFixed(1)}" fill="#FF6B6B" rx="2"/>
+<text x="${(x+bw).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="9" fill="#aaa">${d.date}</text>`;
+    }).join("")}</svg>`;
+  }
+  return `<div class="card cg"><div class="lbl">体重推移（kg）</div>${lineSvg(wd,"w","#6BCB77")}</div>
+<div class="card cl"><div class="lbl">カロリー（kcal）</div><div style="display:flex;gap:12px;font-size:11px;margin-bottom:6px"><span style="color:#FF9A3C">■ 摂取</span><span style="color:#FF6B6B">■ 消費</span></div>${barSvg(wd)}</div>
+<div class="card cb"><div class="lbl">睡眠時間（時間）</div>${lineSvg(wd,"sl","#4D96FF")}</div>`;
+}
+
+// ── アドバイス ──
+function tabAdvice(ki,ko,td){
+  return `<div class="card cp"><div style="font-size:13px;font-weight:800;margin-bottom:8px">💡 科学的アドバイス</div>
+<div style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.7">目標ペース評価・今日の振り返り・明日食べるといいもの・科学的改善提案を生成します。</div>
+<button class="btn fw" style="background:${S.apiKey&&!S.advBusy?"#C77DFF":"#ddd"}" ${(!S.apiKey||S.advBusy)?"disabled":""} onclick="getAdvice()">${S.advBusy?"⏳ 分析中...":"🔬 科学的アドバイスを生成"}</button>
+${!S.apiKey?`<div class="apin">⚙️ 設定タブでAPIキーを入力してください</div>`:""}
+</div>
+${S.advice?`<div class="card cg"><div style="font-size:14px;line-height:1.85;white-space:pre-wrap">${esc(S.advice)}</div></div>`:""}
+<div class="card cy"><div class="lbl">今日のサマリー</div>
+${[["摂取",ki+" kcal",ki>2000?"⚠️多め":ki>0?"✅":"未記録"],["消費",ko+" kcal",ko>300?"✅運動OK":ko>0?"💪":"未記録"],["収支",(ki-ko)+" kcal",ki-ko<-200?"🔥良い赤字":"⚠️要注意"],["睡眠",td.sleep?td.sleep.hours+"時間":"未記録",td.sleep?(+td.sleep.hours>=7?"✅十分":"⚠️不足"):"--"]].map(([lb,vl,st])=>`
+<div class="sr"><div style="font-size:13px;color:#888">${lb}</div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${vl}</div><div style="font-size:11px;color:#888">${st}</div></div></div>`).join("")}
+</div>`;
+}
+
+// ── 相談 ──
+function tabChat(){
+  const td=getDay(dk);
+  const ki=td.meals.reduce((s,m)=>s+(+m.calories||0),0);
+  const ko=td.exercises.reduce((s,e)=>s+(+e.calories||0),0);
+  const hints=["今日の食事どうだった？","不足してる栄養素は？","体重が減らない理由は？","明日何を食べるといい？","運動のペースは合ってる？"];
+  return `<div class="card cy" style="margin-bottom:10px">
+  <div class="lbl">📊 今日の状況</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;margin-bottom:8px">
+    <div>🍽️ 摂取 <strong>${ki}kcal</strong></div>
+    <div>🔥 消費 <strong>${ko}kcal</strong></div>
+    <div>😴 睡眠 <strong>${td.sleep?td.sleep.hours+"h":"未記録"}</strong></div>
+    <div>📉 収支 <strong style="color:${ki-ko<=0?"#6BCB77":"#FF6B6B"}">${ki-ko>0?"+":""}${ki-ko}kcal</strong></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:5px">
+    ${hints.map(h=>`<button onclick="setHint('${h}')" style="font-size:11px;padding:4px 10px;border-radius:16px;border:1.5px solid #F0E8DC;background:#fff;color:#FF6B6B;cursor:pointer">${h}</button>`).join("")}
+  </div>
+</div>
+<div class="chat-wrap" id="chatArea">
+${S.chat.length===0?`<div style="margin:auto;text-align:center;color:#888;font-size:13px">今日の記録を踏まえてコーチします 💬<br><span style="font-size:11px">上のヒントをタップするか自由に質問してください</span></div>`:""}
+${S.chat.map(m=>`<div class="cm ${m.role==="user"?"u":"a"}">${m.role==="assistant"?`<div style="font-size:10px;color:#888;margin-bottom:3px">🧭 BODY Navi</div>`:""}${esc(m.text)}</div>`).join("")}
+${S.busy?`<div class="cm a" style="color:#888;font-size:12px">考えています...</div>`:""}
+</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+  <input class="inp" id="iCI" value="${esc(S.chatInput)}" placeholder="メッセージ" style="flex:1;border-radius:24px" oninput="S.chatInput=this.value" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+  <button onclick="sendChat()" ${(S.busy||!S.apiKey)?"disabled":""} style="width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#FF6B6B,#FF9A3C);color:#fff;font-size:16px;font-weight:900">➤</button>
+</div>
+${!S.apiKey?`<div class="apin">⚙️ 設定タブでAPIキーを入力してください</div>`:""}`;
+}
+
+// ── 履歴 ──
+function tabHistory(){
+  const all=Object.keys(S.days).sort().reverse();
+  if(!all.length)return `<div style="text-align:center;color:#888;font-size:14px;margin-top:40px">記録がまだありません</div>`;
+  return all.map(k=>{
+    const d=S.days[k];
+    const cal=d.meals?.reduce((s,m)=>s+(+m.calories||0),0)||0;
+    const ex=d.exercises?.reduce((s,e)=>s+(+e.calories||0),0)||0;
+    const pa=S.pastAdd[k]||{open:false};
+    return `<div class="hi${k===dk?" today":""}">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+  <div style="font-weight:800;font-size:13px">${k}${k===dk?`<span style="font-size:10px;color:#FF6B6B;margin-left:6px;background:rgba(255,107,107,0.1);padding:2px 6px;border-radius:10px">今日</span>`:""}</div>
+  <div style="display:flex;align-items:center;gap:8px">
+    ${d.weight?`<div style="font-size:14px;font-weight:900;color:#6BCB77">${d.weight}kg</div>`:""}
+    <button onclick="delDay('${k}')" style="background:rgba(255,107,107,0.1);border:none;color:#FF6B6B;border-radius:8px;padding:3px 8px;font-size:11px;cursor:pointer">削除</button>
+  </div>
+</div>
+<div style="display:flex;gap:10px;font-size:12px;color:#888;flex-wrap:wrap;margin-bottom:8px">
+  <span>🍽️ ${cal}kcal (${d.meals?.length||0}食)</span>
+  ${ex?`<span>🔥 ${ex}kcal消費</span>`:""}
+  ${d.sleep?`<span>😴 ${d.sleep.hours}h</span>`:""}
+</div>
+${d.meals?.length?`<div style="border-top:1px solid #F0E8DC;padding-top:8px;margin-bottom:8px">${d.meals.map((m,i)=>mealHTML(m,i,k)).join("")}</div>`:""}
+<div style="border-top:1px solid #F0E8DC;padding-top:8px">
+${!pa.open?`<button class="pab" onclick="paOpen('${k}')">＋ 食事を追加</button>`:
+`<div style="display:flex;flex-direction:column;gap:8px">
+  <div style="display:flex;gap:4px">${TIMINGS.map(t=>`<button style="flex:1;padding:5px 2px;border-radius:7px;border:1.5px solid ${(pa.timing||"朝")===t?"#FF9A3C":"#F0E8DC"};background:${(pa.timing||"朝")===t?"rgba(255,154,60,0.1)":"transparent"};color:${(pa.timing||"朝")===t?"#FF9A3C":"#888"};font-size:11px;font-weight:700;cursor:pointer" onclick="paSetT('${k}','${t}')">${t}</button>`).join("")}</div>
+  <input class="inp" id="paN_${k}" value="${esc(pa.name||"")}" placeholder="食事名（必須）">
+  <input class="inp" id="paNt_${k}" value="${esc(pa.note||"")}" placeholder="量・備考（任意）">
+  ${!pa.result?`<button style="padding:8px;border-radius:8px;border:none;background:${(pa.name||"").trim()&&!pa.loading?"#C77DFF":"#ddd"};color:#fff;font-size:13px;font-weight:700;cursor:pointer" ${(!(pa.name||"").trim()||pa.loading)?"disabled":""} onclick="paCalc('${k}')">${pa.loading?"計算中...":"カロリーを計算"}</button>`:""}
+  ${pa.result&&!pa.result.error?`<div class="rbox">
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:#888">推定</span><span style="font-size:18px;font-weight:900;color:#FF9A3C">${pa.result.calories} kcal</span></div>
+    <div style="display:flex;gap:6px">
+      <button onclick="paSetR('${k}',null)" style="flex:1;padding:7px;border-radius:7px;border:1.5px solid #F0E8DC;background:#fff;color:#888;font-size:12px;cursor:pointer">再計算</button>
+      <button onclick="paConfirm('${k}')" style="flex:2;padding:7px;border-radius:7px;border:none;background:#6BCB77;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✅ 登録</button>
+    </div></div>`:""}
+  ${pa.result?.error?`<div style="font-size:12px;color:#FF6B6B">⚠️ ${esc(pa.result.error)}</div>`:""}
+  <button onclick="paClose('${k}')" style="padding:6px;border-radius:7px;border:none;background:#f5f5f5;color:#888;font-size:12px;cursor:pointer">キャンセル</button>
+</div>`}
+</div></div>`;
+  }).join("");
+}
+
+// ── 設定 ──
+function tabSettings(){
+  return `<div class="card cp"><div style="font-size:13px;font-weight:800;margin-bottom:8px">⚙️ APIキー設定</div>
+<div style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.7">Anthropic APIキーを設定するとAI機能が使えます。このデバイスのみに保存されます。</div>
+<div style="margin-bottom:10px">
+  <div style="font-size:10px;color:#888;margin-bottom:4px">APIキー</div>
+  <input class="inp" type="${S.showKey?"text":"password"}" id="iAK" value="${S.apiKey}" placeholder="sk-ant-..." oninput="S.apiKey=this.value;try{localStorage.setItem('bn_apikey',this.value);}catch(e){}renderHeader()">
+</div>
+<div style="display:flex;gap:8px">
+  <button onclick="S.showKey=!S.showKey;render()" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid #F0E8DC;background:#fff;color:#888;font-size:12px;cursor:pointer">${S.showKey?"隠す":"表示"}</button>
+  <button onclick="S.apiKey='';try{localStorage.removeItem('bn_apikey');}catch(e){}renderHeader();renderContent();" style="flex:1;padding:9px;border-radius:10px;border:none;background:rgba(255,107,107,0.1);color:#FF6B6B;font-size:12px;cursor:pointer">クリア</button>
+</div>
+${S.apiKey?`<div style="margin-top:10px;padding:8px 12px;border-radius:10px;background:rgba(107,203,119,0.1);font-size:12px;color:#6BCB77">✅ APIキー設定済み</div>`:""}
+</div>
+<div class="card cy"><div style="font-size:13px;font-weight:800;margin-bottom:8px">APIキーの取得方法</div>
+<div style="font-size:12px;color:#888;line-height:1.8">1. console.anthropic.com を開く<br>2. サインアップ・ログイン<br>3.「API Keys」→「Create Key」<br>4. 生成されたキーを上に貼り付け</div></div>`;
+}
+
+// ── 共通部品 ──
+function dateSelector(){
+  const sel=S.selectedDate||dk;
+  return `<div class="dsel">
+    <span style="font-size:12px;color:#888">📅</span>
+    <input type="date" value="${sel}" onchange="setSelectedDate(this.value)" style="flex:1;border:none;background:transparent;font-size:13px;font-weight:700;color:#FF6B6B;outline:none">
+    ${sel!==dk?`<button onclick="setSelectedDate('${dk}')" style="font-size:11px;padding:3px 8px;border-radius:8px;border:none;background:#FF6B6B;color:#fff;cursor:pointer">今日</button>`:""}
+  </div>`;
+}
+
+function mealHTML(m,i,k){
+  const photos=Array.isArray(m.photo)?m.photo:(m.photo?[m.photo]:[]);
+  return `<div class="mr">
+${photos.length?`<div style="display:flex;gap:3px;flex-shrink:0">${photos.slice(0,2).map(s=>`<img src="${s}" style="width:36px;height:36px;border-radius:6px;object-fit:cover">`).join("")}${photos.length>2?`<div style="width:36px;height:36px;border-radius:6px;background:#F0E8DC;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888">+${photos.length-2}</div>`:""}</div>`:""}
+<div style="flex:1;min-width:0">
+  <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px">
+    ${m.timing?`<span class="tag">${m.timing}</span>`:""}
+    <span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.name)}</span>
+  </div>
+  ${(m.protein||m.fat||m.carb)?`<div style="font-size:10px;color:#888">P:${m.protein}g F:${m.fat}g C:${m.carb}g</div>`:""}
+</div>
+<div style="text-align:right;flex-shrink:0">
+  <div style="font-size:13px;font-weight:800;color:#FF9A3C">${m.calories}kcal</div>
+  <div style="font-size:10px;color:#888">${m.time}</div>
+</div>
+<button onclick="delMeal('${k}',${i})" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;flex-shrink:0">×</button>
+</div>`;
+}
+
+// ── Actions ──
+function syncInputs(){
+  document.querySelectorAll("[data-pk]").forEach(el=>{S.profile[el.dataset.pk]=el.value;});
+  LS.save("bn_profile",S.profile);
+  const iW=document.getElementById("iW");if(iW)S.todayW=iW.value;
+  const iMN=document.getElementById("iMN");if(iMN)S.mealName=iMN.value;
+  const iMo=document.getElementById("iMo");if(iMo)S.mealNote=iMo.value;
+}
+
+function updateProfile(k,v){S.profile[k]=v;LS.save("bn_profile",S.profile);renderHeader();}
+function setAct(v){S.profile.activity=v;LS.save("bn_profile",S.profile);renderContent();}
+function setTiming(t){S.timing=t;renderContent();}
+function setSQ(q){S.sl.q=q;renderContent();}
+function setSelectedDate(d){S.selectedDate=d;renderContent();}
+function setHint(text){S.chatInput=text;renderContent();setTimeout(()=>{const el=document.getElementById("iCI");if(el){el.focus();el.value=text;}},50);}
+
+function saveWeight(){
+  const iW=document.getElementById("iW");if(iW)S.todayW=iW.value;
+  mutDay(dk,d=>({...d,weight:S.todayW}));
+  if(!S.profile.weight&&S.todayW)updateProfile("weight",S.todayW);
+  render();
+}
+
+function addEx(){
+  const t=document.getElementById("iET");if(t)S.ex.type=t.value;
+  const m=document.getElementById("iEM");if(m)S.ex.min=m.value;
+  const c=document.getElementById("iEC");if(c)S.ex.cal=c.value;
+  if(!S.ex.type.trim())return;
+  const tdk=S.selectedDate||dk;
+  mutDay(tdk,d=>({...d,exercises:[...d.exercises,{type:S.ex.type,minutes:S.ex.min,calories:S.ex.cal,time:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})}]}));
+  S.ex={type:"",min:"",cal:""};renderContent();
+}
+function delEx(i){const tdk=S.selectedDate||dk;mutDay(tdk,d=>({...d,exercises:d.exercises.filter((_,j)=>j!==i)}));renderContent();}
+
+function saveSleep(){
+  const h=document.getElementById("iSH");if(h)S.sl.h=h.value;
+  if(!S.sl.h)return;
+  const tdk=S.selectedDate||dk;
+  mutDay(tdk,d=>({...d,sleep:{hours:S.sl.h,quality:S.sl.q}}));
+  S.sl={h:"",q:"3"};renderContent();
+}
+
+function delMeal(k,i){mutDay(k,d=>({...d,meals:d.meals.filter((_,j)=>j!==i)}));renderContent();}
+function delDay(k){if(!confirm(`${k}のデータを削除しますか？`))return;delete S.days[k];LS.save("bn_days",S.days);renderContent();}
+
+// 履歴から追加
+function addFromHistory(idx){
+  const history=getMealHistory();
+  const m=history[idx];
+  if(!m)return;
+  const tdk=S.selectedDate||dk;
+  const meal={...m,timing:S.timing,time:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}),photo:null};
+  mutDay(tdk,d=>({...d,meals:[...d.meals,meal]}));
+  S.showHistoryPicker=false;
+  render();
+}
+
+async function onPhoto(input){
+  const files=Array.from(input.files||[]);input.value="";if(!files.length)return;
+  syncInputs();S.imgBusy=true;renderContent();
+  try{
+    const urls=await Promise.all(files.map(f=>readFile(f)));
+    S.imgData=[...S.imgData,...urls];
+    if(S.apiKey&&!S.mealName.trim()){
+      const[hdr,b64]=urls[0].split(",");
+      const mm=hdr.match(/data:([^;]+);/);
+      const safe=["image/jpeg","image/png","image/gif","image/webp"].includes(mm?mm[1]:"")?(mm?mm[1]:"image/jpeg"):"image/jpeg";
+      const raw=await api([{role:"user",content:[{type:"image",source:{type:"base64",media_type:safe,data:b64}},{type:"text",text:"この食事の名前を日本語で一言だけ答えてください。例: セイロそば"}]}]);
+      if(raw)S.mealName=raw.trim().slice(0,30);
+    }
+  }catch(e){console.error(e);}
+  S.imgBusy=false;renderContent();
+}
+function rmPhoto(i){S.imgData=S.imgData.filter((_,j)=>j!==i);renderContent();}
+
+async function calcCal(){
+  const mn=document.getElementById("iMN");if(mn)S.mealName=mn.value;
+  const mo=document.getElementById("iMo");if(mo)S.mealNote=mo.value;
+  if(!S.mealName.trim()){alert("食事名を入力してください");return;}
+  S.busy=true;S.calcResult=null;renderContent();
+  try{
+    const prompt=`食事「${S.mealName}」${S.mealNote?`（${S.mealNote}）`:""}のカロリーとPFC栄養素を推定してください。\n以下の形式で数字だけ答えてください：\nカロリー: 530\nタンパク質: 25\n脂質: 12\n炭水化物: 68`;
+    let messages;
+    if(S.apiKey&&S.imgData.length){
+      const blocks=S.imgData.map(u=>{const[hdr,b64]=u.split(",");const mm=hdr.match(/data:([^;]+);/);const safe=["image/jpeg","image/png","image/gif","image/webp"].includes(mm?mm[1]:"")?(mm?mm[1]:"image/jpeg"):"image/jpeg";return{type:"image",source:{type:"base64",media_type:safe,data:b64}};});
+      messages=[{role:"user",content:[...blocks,{type:"text",text:prompt}]}];
+    }else messages=[{role:"user",content:prompt}];
+    const raw=await api(messages);
+    const gn=l=>{const m=raw.match(new RegExp(l+'[：:＝=]?\\s*(\\d+)'));return m?+m[1]:0;};
+    S.calcResult={calories:gn('カロリー')||(raw.match(/\d+/g)?+raw.match(/\d+/g)[0]:0),protein:gn('タンパク質')||gn('たんぱく質'),fat:gn('脂質'),carb:gn('炭水化物')||gn('糖質'),detail:raw.slice(0,80)};
+  }catch(e){S.calcResult={error:e.message};}
+  S.busy=false;renderContent();
+}
+
+function confirmMeal(){
+  if(!S.calcResult||S.calcResult.error)return;
+  const tdk=S.selectedDate||dk;
+  const meal={name:S.mealName.trim(),calories:S.calcResult.calories,protein:S.calcResult.protein||0,fat:S.calcResult.fat||0,carb:S.calcResult.carb||0,detail:S.calcResult.detail,timing:S.timing,time:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}),photo:S.imgData.length?[...S.imgData]:null};
+  mutDay(tdk,d=>({...d,meals:[...d.meals,meal]}));
+  S.mealName="";S.mealNote="";S.imgData=[];S.calcResult=null;render();
+}
+
+async function getAdvice(){
+  if(!S.apiKey)return;
+  S.advBusy=true;S.advice="";renderContent();
+  const td=getDay(dk);
+  const ki=td.meals.reduce((s,m)=>s+(+m.calories||0),0);
+  const ko=td.exercises.reduce((s,e)=>s+(+e.calories||0),0);
+  const b=bmi(S.profile.height,S.profile.weight);
+  const wt=Object.entries(S.days).sort((a,b)=>a[0]>b[0]?1:-1).slice(-7).map(([k,v])=>`${k}:${v.weight||"?"}kg`).join(", ");
+  const wl=S.profile.goal&&S.profile.weeks&&S.profile.weight?((+S.profile.weight-+S.profile.goal)/+S.profile.weeks).toFixed(2):"未設定";
+  const sys="科学的根拠に基づくダイエット・健康アドバイザー。栄養学・運動生理学・睡眠科学の観点からポジティブで具体的なアドバイスを日本語で。";
+  const prompt=`身長${S.profile.height}cm 体重${S.profile.weight}kg 年齢${S.profile.age}歳 BMI${b||"?"}(${b?bmiL(b):"?"})\n目標：${S.profile.goal}kgまで${S.profile.weeks}週間（週${wl}kg減）\n今日：摂取${ki}kcal 消費${ko}kcal\n食事：${td.meals.map(m=>`${m.timing}${m.name}(${m.calories}kcal)`).join("、")||"未記録"}\n睡眠：${td.sleep?td.sleep.hours+"時間":"未記録"}\n体重推移：${wt||"なし"}\n\n1.【目標ペース評価】週${wl}kg減の科学的評価\n2.【今日の評価】良い点と改善点\n3.【明日食べるといいもの】3つ\n4.【科学的改善提案】2〜3点\n300字程度で。`;
+  try{S.advice=await api([{role:"user",content:prompt}],sys);}catch(e){S.advice="エラー: "+e.message;}
+  S.advBusy=false;renderContent();
+}
+
+async function sendChat(){
+  const el=document.getElementById("iCI");if(el)S.chatInput=el.value;
+  const msg=S.chatInput.trim();
+  if(!msg||S.busy||!S.apiKey)return;
+  S.chatInput="";S.busy=true;
+  S.chat.push({role:"user",text:msg});
+  LS.save("bn_chat",S.chat);renderContent();
+  const td=getDay(dk);
+  const ki=td.meals.reduce((s,m)=>s+(+m.calories||0),0);
+  const ko=td.exercises.reduce((s,e)=>s+(+e.calories||0),0);
+  const pi=td.meals.reduce((s,m)=>s+(+m.protein||0),0);
+  const tP=S.profile.weight?Math.round(+S.profile.weight*1.6):60;
+  const wl=S.profile.goal&&S.profile.weeks&&S.profile.weight?((+S.profile.weight-+S.profile.goal)/+S.profile.weeks).toFixed(2):"未設定";
+  const sys=`あなたはBODY Naviのパーソナルダイエットコーチです。
+ユーザーデータ：身長${S.profile.height}cm 体重${S.profile.weight}kg 年齢${S.profile.age}歳
+目標：${S.profile.goal}kgまで${S.profile.weeks}週間（週${wl}kg減）
+今日：摂取${ki}kcal 消費${ko}kcal 収支${ki-ko}kcal
+食事：${td.meals.map(m=>`${m.timing}${m.name}(${m.calories}kcal)`).join("、")||"未記録"}
+タンパク質${pi}g（目標${tP}g）
+睡眠：${td.sleep?td.sleep.hours+"時間":"未記録"}
+
+コーチングスタイル：今日の具体的な頑張りを認めつつ、本音で改善点を伝え、「明日はこうしよう」と前向きに転換する。科学的根拠を添えて200字以内で日本語で。`;
+  try{
+    const reply=await api(S.chat.map(m=>({role:m.role==="user"?"user":"assistant",content:m.text})),sys);
+    S.chat.push({role:"assistant",text:reply});
+    LS.save("bn_chat",S.chat.slice(-40));
+  }catch(e){S.chat.push({role:"assistant",text:"エラー: "+e.message});}
+  S.busy=false;renderContent();
+}
+
+// pastAdd
+function paOpen(k){S.pastAdd[k]={open:true,name:"",note:"",timing:"朝",result:null,loading:false};renderContent();}
+function paClose(k){S.pastAdd[k]={open:false};renderContent();}
+function paSetT(k,t){syncInputs();S.pastAdd[k].timing=t;renderContent();}
+function paSetR(k,r){S.pastAdd[k].result=r;renderContent();}
+async function paCalc(k){
+  syncInputs();
+  const pa=S.pastAdd[k];if(!pa.name.trim())return;
+  pa.loading=true;pa.result=null;renderContent();
+  try{
+    const raw=await api([{role:"user",content:`食事「${pa.name}」${pa.note?`（${pa.note}）`:""}のカロリーとPFCを推定。\nカロリー: 数値\nタンパク質: 数値\n脂質: 数値\n炭水化物: 数値\nの形式で答えてください。`}]);
+    const gn=l=>{const m=raw.match(new RegExp(l+'[：:＝=]?\\s*(\\d+)'));return m?+m[1]:0;};
+    pa.result={calories:gn('カロリー')||(raw.match(/\d+/g)?+raw.match(/\d+/g)[0]:0),protein:gn('タンパク質'),fat:gn('脂質'),carb:gn('炭水化物')};
+  }catch(e){pa.result={error:e.message};}
+  pa.loading=false;renderContent();
+}
+function paConfirm(k){
+  syncInputs();
+  const pa=S.pastAdd[k];if(!pa.result||pa.result.error)return;
+  mutDay(k,d=>({...d,meals:[...d.meals,{name:pa.name.trim(),calories:pa.result.calories,protein:pa.result.protein||0,fat:pa.result.fat||0,carb:pa.result.carb||0,timing:pa.timing,time:"過去記録",photo:null}]}));
+  paClose(k);
+}
+
+init();
+</script>
+</body>
+</html>
