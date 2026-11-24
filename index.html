@@ -320,8 +320,8 @@ function init(){
   // iPhoneショートカットからの取り込み（?w=体重kg&steps=歩数）
   try{
     const q=new URLSearchParams(location.search);
-    const hw=parseFloat(q.get("w"));const hs=parseInt(q.get("steps"));
-    if(hw>0||hs>0){
+    const hw=parseFloat(q.get("w"));const hs=parseInt(q.get("steps"));const hk=parseFloat(q.get("kcal"));
+    if(hw>0||hs>0||hk>0){
       const msgs=[];
       if(hw>0){
         S.todayW=String(hw);
@@ -329,7 +329,7 @@ function init(){
         if(!S.profile.weight)updateProfile("weight",String(hw));
         msgs.push(`体重${hw}kg`);
       }
-      if(hs>0){
+      if(hs>0&&!(hk>0)){
         const kg=+S.profile.weight||55;
         const kcal=Math.round(hs*0.0007*kg*0.75);
         mutDay(dk,d=>{
@@ -338,6 +338,14 @@ function init(){
           return{...d,exercises:ex};
         });
         msgs.push(`${hs.toLocaleString()}歩`);
+      }
+      if(hk>0){
+        mutDay(dk,d=>{
+          const ex=d.exercises.filter(e=>e.type!=="消費カロリー（ヘルスケア）"&&e.type!=="歩数（ヘルスケア）");
+          ex.push({type:"消費カロリー（ヘルスケア）",minutes:"",calories:Math.round(hk),time:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})});
+          return{...d,exercises:ex};
+        });
+        msgs.push(`消費${Math.round(hk)}kcal`);
       }
       S.healthMsg="ヘルスケアから取り込みました："+msgs.join("・");
       history.replaceState(null,"",location.pathname);
