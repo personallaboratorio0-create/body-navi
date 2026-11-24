@@ -490,7 +490,7 @@ function tabMeal(td,ki){
 <div class="card cl">
   <div style="font-size:13px;font-weight:800;margin-bottom:12px">🍽️ メニューを追加</div>
   ${S.quickMsg?`<div class="qmsg">✅ ${esc(S.quickMsg)}<button onclick="S.quickMsg='';renderContent()" style="float:right;border:none;background:none;cursor:pointer;color:#2E7D32;font-size:13px">✕</button></div>`:""}
-  <label class="hero">📷 写真でワンタップ記録<input type="file" accept="image/*" capture="environment" style="display:none" onchange="onPhotoQuick(this)"></label>
+  <label class="hero">📷 写真でワンタップ記録<input type="file" accept="image/*" style="display:none" onchange="onPhotoQuick(this)"></label>
   <div style="font-size:11px;color:#aaa;text-align:center;margin-bottom:12px">写真を選ぶだけで、判定して自動で記録します</div>
   ${dateSelector()}
   <div class="timr">${TIMINGS.map(t=>`<button class="timb${S.timing===t?" on":""}" onclick="setTiming('${t}')">${t}</button>`).join("")}</div>
@@ -505,7 +505,7 @@ function tabMeal(td,ki){
   </div>`:""}`:
   `<label style="display:block;margin-bottom:10px;padding:16px 0;border-radius:12px;border:2px dashed rgba(255,107,107,0.3);background:rgba(255,107,107,0.04);text-align:center;cursor:pointer;color:#888;font-size:13px">
     📷 写真を添付<br><span style="font-size:11px;color:#aaa">（キー設定済みなら栄養バランスも判定・複数可）</span>
-    <input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="onPhoto(this)">
+    <input type="file" accept="image/*" multiple style="display:none" onchange="onPhoto(this)">
   </label>`}
   <div style="margin-bottom:8px">
     <div style="font-size:10px;color:#888;margin-bottom:4px">メニュー名 <span style="color:#FF6B6B">*必須</span></div>
@@ -952,6 +952,25 @@ async function apiVision(blocks){
 }
 function rmPhoto(i){S.imgData=S.imgData.filter((_,j)=>j!==i);if(!S.imgData.length)S.photoAnalysis=null;renderContent();}
 
+// メニュー名をAIで推定（内蔵DBにない名前のとき）
+async function aiEstimateMeal(text){
+S.busy=true;S.calcResult=null;renderContent();
+try{
+  const raw=await apiVision([{type:"text",text:"次の食事について、一般的な1人前の量で、構成する食品ごとのカロリーとPFC（タンパク質・脂質・炭水化物）を推定してください。外食やコンビニのメニュー名でも、一般的な内容と量から見積もってください。最後に、この食事で不足しがちな栄養素と、足すといい食品を1つ挙げてください。\n食事: "+text}]);
+  const match=raw.match(/\{[\s\S]*\}/);
+  const parsed=JSON.parse(match[0]);
+  if(!parsed.foods||!parsed.foods.length)throw new Error("empty");
+  const sum=k=>Math.round(parsed.foods.reduce((x,f)=>x+(+f[k]||0),0)*10)/10;
+  const tot={calories:Math.round(parsed.foods.reduce((x,f)=>x+(+f.calories||0),0)),protein:sum("protein"),fat:sum("fat"),carb:sum("carb")};
+  S.photoAnalysis={lines:parsed.foods.slice(0,6).map(f=>`・${f.name}: ${f.calories}kcal P:${f.protein}g F:${f.fat}g C:${f.carb}g`),shortage:parsed.shortage||null};
+  S.calcResult={...tot,detail:("AI推定: "+(parsed.comment||"メニュー名から推定")).slice(0,150)};
+}catch(e){
+  console.error(e);
+  S.calcResult={error:"AI推定に失敗しました。通信環境か、設定のAPIキーが正しいかを確認してください（古いキーを削除した場合は、新しいキーの貼り直しが必要です）。"};
+}
+S.busy=false;renderContent();
+}
+
 function calcCal(){
 const mn=document.getElementById("iMN");if(mn)S.mealName=mn.value;
 const mo=document.getElementById("iMo");if(mo)S.mealNote=mo.value;
@@ -960,7 +979,8 @@ let src=S.mealName;
 let res=parseMeal(src);
 if(!res.items.length&&S.mealNote){res=parseMeal(S.mealNote);src=S.mealNote;}
 if(!res.items.length){
-S.calcResult={error:"内蔵データに見つかりませんでした。食品名を分けて書くか（例：ご飯、納豆、味噌汁）、追加後に「編集」で数値を直接入れてください。"};
+if(S.apiKey){aiEstimateMeal(src);return;}
+S.calcResult={error:"内蔵データに見つかりませんでした。食品名を分けて書くか（例：ご飯、納豆、味噌汁）、追加後に「編集」で数値を直接入れてください。設定でAPIキーを入れると、メニュー名のままでもAIが推定できるようになります。"};
 renderContent();return;
 }
 const sum=k=>Math.round(res.items.reduce((x,i)=>x+i[k],0)*10)/10;
