@@ -485,7 +485,9 @@ function pfcCard(pi,fi,ci,tc){
     ${[["🥩 P",tP,"g","#6BCB77"],["🧈 F",tF,"g","#FF9A3C"],["🍚 C",tC,"g","#4D96FF"]].map(([lb,vl,unit,cl])=>`<div class="pfci" style="background:${cl}18"><div style="font-size:10px;color:${cl};font-weight:700">${lb}</div><div style="font-size:16px;font-weight:900;color:${cl}">${vl}${unit}</div></div>`).join("")}
     </div></div>`;
   }
-  const lP=Math.max(tP-pi,0),lF=Math.max(tF-fi,0),lC=Math.max(tC-ci,0);
+  const r1=x=>Math.round(x*10)/10;
+  pi=r1(pi);fi=r1(fi);ci=r1(ci);
+  const lP=r1(Math.max(tP-pi,0)),lF=r1(Math.max(tF-fi,0)),lC=r1(Math.max(tC-ci,0));
   return `<div class="card cg"><div class="lbl">PFC　今日 vs 目標</div><div class="pfcr">
   ${[["🥩 P",pi,tP,"#6BCB77"],["🧈 F",fi,tF,"#FF9A3C"],["🍚 C",ci,tC,"#4D96FF"]].map(([lb,cur,tgt,cl])=>{
     const pct=Math.min(Math.round(cur/tgt*100),100);
@@ -493,7 +495,7 @@ function pfcCard(pi,fi,ci,tc){
       <div style="font-size:10px;color:${cl};font-weight:700">${lb}</div>
       <div style="font-size:13px;font-weight:900;color:${cl}">${cur}<span style="font-size:9px">/${tgt}g</span></div>
       <div style="background:#eee;border-radius:4px;height:5px;margin:3px 0"><div style="background:${cl};width:${pct}%;height:5px;border-radius:4px"></div></div>
-      <div style="font-size:10px;color:${cl}">あと${Math.max(tgt-cur,0)}g</div>
+      <div style="font-size:10px;color:${cl}">あと${r1(Math.max(tgt-cur,0))}g</div>
     </div>`;
   }).join("")}
   </div>
@@ -1042,9 +1044,9 @@ function getAdvice(){
 const td=getDay(dk);
 const ki=td.meals.reduce((x,m)=>x+(+m.calories||0),0);
 const ko=td.exercises.reduce((x,e)=>x+(+e.calories||0),0);
-const dp=td.meals.reduce((x,m)=>x+(+m.protein||0),0);
-const df=td.meals.reduce((x,m)=>x+(+m.fat||0),0);
-const dc=td.meals.reduce((x,m)=>x+(+m.carb||0),0);
+const dp=Math.round(td.meals.reduce((x,m)=>x+(+m.protein||0),0)*10)/10;
+const df=Math.round(td.meals.reduce((x,m)=>x+(+m.fat||0),0)*10)/10;
+const dc=Math.round(td.meals.reduce((x,m)=>x+(+m.carb||0),0)*10)/10;
 const bmr=S.profile.height&&S.profile.weight&&S.profile.age?Math.round(655+9.6*+S.profile.weight+1.8*+S.profile.height-4.7*+S.profile.age):null;
 const tdee=bmr?Math.round(bmr*(+S.profile.activity||1.375)):null;
 const wl=S.profile.goal&&S.profile.weeks&&S.profile.weight?Math.max((+S.profile.weight-+S.profile.goal)/+S.profile.weeks,0):0;
