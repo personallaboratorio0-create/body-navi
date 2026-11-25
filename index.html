@@ -548,6 +548,7 @@ function tabMeal(td,ki){
     </div>
     <div class="pfcr">${[["🥩 P",(S.calcResult.protein||0)+"g","#6BCB77"],["🧈 F",(S.calcResult.fat||0)+"g","#FF9A3C"],["🍚 C",(S.calcResult.carb||0)+"g","#4D96FF"]].map(([lb,vl,cl])=>`<div class="pfci" style="background:${cl}18"><div style="font-size:10px;color:${cl};font-weight:700">${lb}</div><div style="font-size:14px;font-weight:800;color:${cl}">${vl}</div></div>`).join("")}</div>
     ${S.calcResult.detail?`<div style="font-size:11px;color:#888;margin-bottom:8px;line-height:1.6;background:#f9f9f9;border-radius:8px;padding:8px">${esc(S.calcResult.detail)}</div>`:""}
+    <div style="background:#fff3cd;border-radius:8px;padding:6px 10px;color:#856404;font-size:12px;font-weight:600;margin-bottom:8px">💡 ${mealComment(S.calcResult)}</div>
     <div style="display:flex;gap:8px">
       <button onclick="S.calcResult=null;render()" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid #F0E8DC;background:#fff;color:#888;font-size:13px;cursor:pointer">再計算</button>
       <button onclick="confirmMeal()" style="flex:2;padding:9px;border-radius:10px;border:none;background:#6BCB77;color:#fff;font-size:13px;font-weight:700;cursor:pointer">✅ 追加する</button>
@@ -994,6 +995,21 @@ try{
   S.calcResult={error:"AI推定に失敗しました。通信環境か、設定のAPIキーが正しいかを確認してください（古いキーを削除した場合は、新しいキーの貼り直しが必要です）。"};
 }
 S.busy=false;renderContent();
+}
+
+// 計算結果へのコメント（数字だけから作る。食材の推測はしない）
+function mealComment(cr){
+  const kcal=cr.calories||0, p=cr.protein||0, f=cr.fat||0, c=cr.carb||0;
+  if(kcal<=10) return "カロリーはほぼゼロです。そのまま記録して大丈夫です。";
+  const pr=kcal? (p*4/kcal) : 0, fr=kcal? (f*9/kcal) : 0, crb=kcal? (c*4/kcal) : 0;
+  const msgs=[];
+  if(p>=25||pr>=0.25) msgs.push("タンパク質がしっかり摂れています");
+  if(fr>=0.40) msgs.push("脂質が多めです。次の食事はあっさりめがおすすめです");
+  if(crb>=0.65&&p<15) msgs.push("炭水化物が中心です。タンパク質のおかずを足すとバランスが良くなります");
+  if(kcal>=700) msgs.push("ボリュームのある一食です");
+  if(kcal<=350&&p>=15) msgs.push("軽めでもタンパク質が摂れていていいです");
+  if(!msgs.length) msgs.push("バランスの取れた一食です");
+  return msgs.slice(0,2).join("。")+"。";
 }
 
 function calcCal(){
