@@ -132,9 +132,9 @@ const TIMINGS=["朝","昼","晩","おやつ","夜食"];
 const QE=["😫","😴","😐","😊","🌟"];
 const TABS=["🏠今日","🍽️食事","🏃運動","😴睡眠","📊グラフ","💡アドバイス","📅履歴","⚙️設定"];
 
-function getDay(k){return S.days[k]||{weight:"",meals:[],exercises:[],sleep:null};}
+function getDay(k){return S.days[k]||{weight:"",bf:"",meals:[],exercises:[],sleep:null};}
 function mutDay(k,fn){
-  if(!S.days[k])S.days[k]={weight:"",meals:[],exercises:[],sleep:null};
+  if(!S.days[k])S.days[k]={weight:"",bf:"",meals:[],exercises:[],sleep:null};
   S.days[k]=fn(S.days[k]);
   LS.save("bn_days",S.days);
 }
@@ -328,17 +328,22 @@ function init(){
   const k=LS.load("bn_apikey");if(k)S.apiKey=k;
   const d=LS.load("bn_days");if(d){S.days=d;if(d[dk]?.weight)S.todayW=d[dk].weight;}
   const c=LS.load("bn_chat");if(c)S.chat=c;
-  // iPhoneショートカットからの取り込み（?w=体重kg&steps=歩数）
+  // iPhoneショートカットからの取り込み（?w=体重kg&steps=歩数&kcal=消費kcal&bf=体脂肪率%）
   try{
     const q=new URLSearchParams(location.search);
-    const hw=parseFloat(q.get("w"));const hs=parseInt(q.get("steps"));const hk=parseFloat(q.get("kcal"));
-    if(hw>0||hs>0||hk>0){
+    const hw=parseFloat(q.get("w"));const hs=parseInt(q.get("steps"));const hk=parseFloat(q.get("kcal"));const hb=parseFloat(q.get("bf"));
+    if(hw>0||hs>0||hk>0||hb>0){
       const msgs=[];
       if(hw>0){
         S.todayW=String(hw);
         mutDay(dk,d=>({...d,weight:String(hw)}));
         if(!S.profile.weight)updateProfile("weight",String(hw));
         msgs.push(`体重${hw}kg`);
+      }
+      if(hb>0&&hb<100){
+        const bv=Math.round(hb*10)/10;
+        mutDay(dk,d=>({...d,bf:String(bv)}));
+        msgs.push(`体脂肪率${bv}%`);
       }
       if(hs>0&&!(hk>0)){
         const kg=+S.profile.weight||55;
@@ -450,6 +455,7 @@ ${pfcCard(pi,fi,ci,tc)}
     <button class="btn" style="background:#FFD93D;color:#2D2D2D" onclick="saveWeight()">保存</button>
   </div>
   ${b?`<div style="margin-top:6px;font-size:12px;color:#888">BMI ${b}（${bmiL(b)}）　目標まで ${S.profile.goal?(+S.profile.weight-+S.profile.goal).toFixed(1):"?"}kg</div>`:""}
+  ${td.bf?`<div style="margin-top:4px;font-size:12px;color:#888">体脂肪率 ${td.bf}%</div>`:""}
 </div>
 ${tc?`<div class="card cg"><div class="lbl">栄養ガイド</div>
   <div class="tc" style="margin-bottom:10px">
