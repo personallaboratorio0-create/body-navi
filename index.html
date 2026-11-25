@@ -466,12 +466,6 @@ ${tc?`<div class="card cg"><div class="lbl">栄養ガイド</div>
   <div class="ar">${[["1.2","座り仕事"],["1.375","軽い運動"],["1.55","週3〜5"],["1.725","毎日運動"],["1.9","アスリート級"]].map(([val,lb])=>`<button class="ab${String(S.profile.activity||"1.375")===val?" on":""}" onclick="setAct('${val}')">${lb}</button>`).join("")}</div>
   ${wl>1?`<div class="wbox">⚠️ 週${wl.toFixed(2)}kg減は急激です。筋肉量低下・リバウンドのリスクがあります。</div>`:""}
 </div>`:""}
-<div class="card cp"><div class="lbl">プロフィール</div>
-  <div class="tc">
-    ${[["身長(cm)","height"],["体重(kg)","weight"],["年齢","age"],["目標体重(kg)","goal"],["目標期間(週)","weeks"]].map(([lb,k])=>`
-    <div><div style="font-size:10px;color:#888;margin-bottom:3px">${lb}</div><input class="inp" type="number" data-pk="${k}" value="${esc(S.profile[k])}" placeholder="--"></div>`).join("")}
-  </div>
-</div>
 ${td.meals.length?`<div class="card co"><div class="lbl">今日の食事　${ki} kcal</div>${td.meals.map((m,i)=>mealHTML(m,i,dk)).join("")}</div>`:""}`;
 }
 
@@ -733,7 +727,14 @@ ${!pa.open?`<button class="pab" onclick="paOpen('${k}')">＋ 食事を追加</bu
 
 // ── 設定 ──
 function tabSettings(){
-return `<div class="card cb"><div style="font-size:13px;font-weight:800;margin-bottom:8px">📷 写真判定（任意）</div>
+return `<div class="card cp"><div style="font-size:13px;font-weight:800;margin-bottom:8px">👤 プロフィール</div>
+  <div class="tc">
+    ${[["身長(cm)","height"],["体重(kg)","weight"],["年齢","age"],["目標体重(kg)","goal"],["目標期間(週)","weeks"]].map(([lb,k])=>`
+    <div><div style="font-size:10px;color:#888;margin-bottom:3px">${lb}</div><input class="inp" type="number" data-pk="${k}" value="${esc(S.profile[k])}" placeholder="--"></div>`).join("")}
+  </div>
+  <div style="font-size:11px;color:#aaa;margin-top:6px">目標カロリーやPFCの目標は、この内容から計算されます</div>
+</div>
+<div class="card cb"><div style="font-size:13px;font-weight:800;margin-bottom:8px">📷 写真判定（任意）</div>
 <div style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.7">APIキーを入れると、食事の写真から食品と栄養バランスを判定できます。通信するのは写真判定のときだけで、1枚1円前後です。キーはこの端末の中にだけ保存されます。</div>
 <div style="display:flex;gap:6px">
 <input class="inp" id="iAK" type="${S.showKey?"text":"password"}" value="${esc(S.apiKey)}" placeholder="APIキーを貼り付け" style="flex:1">
