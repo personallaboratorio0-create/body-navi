@@ -827,6 +827,7 @@ function mealHTML(m,i,k){
         <input class="inp" type="number" id="emF" value="${m.fat||0}" placeholder="F(g)" style="flex:1">
         <input class="inp" type="number" id="emCb" value="${m.carb||0}" placeholder="C(g)" style="flex:1">
       </div>
+      <div class="timr">${TIMINGS.map(t=>`<button class="timb${m.timing===t?" on":""}" onclick="setEditTiming('${k}',${i},'${t}')">${t}</button>`).join("")}</div>
       <div style="display:flex;gap:6px">
         <button onclick="saveMealEdit('${k}',${i})" style="flex:2;padding:8px;border-radius:8px;border:none;background:#6BCB77;color:#fff;font-size:13px;font-weight:700;cursor:pointer">保存</button>
         <button onclick="S.editMeal=null;renderContent()" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid #F0E8DC;background:#fff;color:#888;font-size:13px;cursor:pointer">キャンセル</button>
@@ -916,6 +917,15 @@ function saveMealEdit(k,i){
     return {...d,meals};
   });
   S.editMeal=null;renderContent();
+}
+
+function setEditTiming(k,i,t){
+  mutDay(k,d=>{
+    const meals=[...d.meals];
+    meals[i]={...meals[i],timing:t};
+    return {...d,meals};
+  });
+  renderContent();
 }
 
 function editEx(k,i){
