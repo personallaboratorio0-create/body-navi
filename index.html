@@ -258,6 +258,7 @@ const FOOD_DB=[
 {n:"チョコレート",u:"1枚",g:50,k:279,p:3.5,f:16,c:28,keys:["チョコ"]},
 {n:"アイスクリーム",u:"1個",g:100,k:180,p:3,f:8,c:24,keys:["アイス"]},
 {n:"プリン",u:"1個",g:100,k:130,p:3,f:5,c:18,keys:[]},
+{n:"黒ごまプリン",u:"1個",g:80,k:120,p:3,f:6,c:14,keys:["ごまプリン","黒ゴマプリン"]},
 {n:"ショートケーキ",u:"1個",g:110,k:320,p:5,f:16,c:40,keys:["ケーキ"]},
 {n:"チーズケーキ",u:"1個",g:100,k:320,p:6,f:20,c:28,keys:[]},
 {n:"どら焼き",u:"1個",g:90,k:230,p:5,f:5,c:42,keys:[]},
@@ -304,6 +305,13 @@ function parseMeal(text){
     const r2=v=>Math.round(v*mult*10)/10;
     items.push({name:f.n+(mult!==1?" ×"+(Math.round(mult*100)/100):""),calories:Math.round(f.k*mult),protein:r2(f.p),fat:r2(f.f),carb:r2(f.c),unit:f.u});
   });
+  if(parts.some(p=>p.includes("定食"))){
+    const hasRice=items.some(i=>/ご飯|玄米|おかゆ/.test(i.name));
+    const hasSoup=items.some(i=>i.name.includes("味噌汁"));
+    const addAuto=q=>{const f=findFood(q);if(f)items.push({name:f.n+"（定食分）",calories:f.k,protein:f.p,fat:f.f,carb:f.c,unit:f.u});};
+    if(!hasRice)addAuto("ご飯");
+    if(!hasSoup)addAuto("味噌汁");
+  }
   return{items,unknown};
 }
 
@@ -538,6 +546,11 @@ function tabMeal(td,ki){
   <div style="margin-bottom:10px">
     <div style="font-size:10px;color:#888;margin-bottom:4px">量・備考（任意）</div>
     <input class="inp" id="iMo" value="${esc(S.mealNote)}" placeholder="例：1パック、茶碗1杯">
+  </div>
+  <div style="margin-bottom:10px">
+    <div style="font-size:10px;color:#888;margin-bottom:4px">まとめて貼り付け（コピペ用・1品ずつ改行か「、」区切り）</div>
+    <textarea class="inp" id="iPaste" rows="3" placeholder="例：サンマフライ&#10;牡蠣フライ 2個&#10;ご飯&#10;味噌汁"></textarea>
+    <button onclick="calcPaste()" style="margin-top:6px;width:100%;padding:9px;border-radius:10px;border:1.5px solid #FF6B6B;background:#fff;color:#FF6B6B;font-size:13px;font-weight:700;cursor:pointer">📋 貼り付けから計算</button>
   </div>
   ${!S.calcResult?`<button class="btn fw" style="background:${!S.busy?"#FF6B6B":"#ddd"}" ${S.busy?"disabled":""} onclick="calcCal()">${S.busy?"⏳ 計算中...":"🔢 カロリー・栄養素を計算"}</button>`:""}
   ${S.calcResult&&!S.calcResult.error?`<div class="rbox">
@@ -1016,6 +1029,13 @@ function mealComment(cr){
   if(kcal<=350&&p>=15) msgs.push("軽めでもタンパク質が摂れていていいです");
   if(!msgs.length) msgs.push("バランスの取れた一食です");
   return msgs.slice(0,2).join("。")+"。";
+}
+
+function calcPaste(){
+const ta=document.getElementById("iPaste");if(!ta||!ta.value.trim()){alert("貼り付け欄に入力してください");return;}
+S.mealName=ta.value.split(/\n+/).map(x=>x.trim()).filter(Boolean).join("、");
+const mn=document.getElementById("iMN");if(mn)mn.value=S.mealName;
+calcCal();
 }
 
 function calcCal(){
