@@ -289,7 +289,12 @@ function findFood(q){
 
 // メニュー名テキストを内蔵DBで解析して明細と合計を返す
 function parseMeal(text){
-  const parts=String(text||"").split(/[、,・\n]+/).map(x=>x.trim()).filter(Boolean);
+  const rawParts=String(text||"").split(/[、,・\n\s]+/).map(x=>x.trim()).filter(Boolean);
+  const parts=[];
+  rawParts.forEach(tok=>{
+    if(parts.length&&/^(\d+(?:\.\d+)?\s*(個|枚|杯|本|切れ|パック|缶|袋|皿|人前|玉|食|貫|尾|合|切|房|kg|g|グラム)|[×xX]\d+(?:\.\d+)?|半分)$/.test(tok))parts[parts.length-1]+=" "+tok;
+    else parts.push(tok);
+  });
   const items=[],unknown=[];
   parts.forEach(part=>{
     const f=findFood(part);
